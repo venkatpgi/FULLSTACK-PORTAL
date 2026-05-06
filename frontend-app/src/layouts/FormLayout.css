@@ -1,0 +1,28 @@
+.form-layout-container {
+  margin-left: 260px;     /* space for sidebar */
+  padding: 30px;
+  width: calc(100% - 260px);
+  box-sizing: border-box;
+}
+
+/* form card */
+.form-layout-container .screening-form{
+  width:100%;
+  max-width:1100px;
+
+  /* compensate sidebar width */
+  transform:translateX(-130px);
+}
+
+.form-layout-container {
+  margin-left: 260px;
+  width: 100%;
+  padding: 20px;
+}
+.form-layout-container {
+  margin-left: 260px;
+  padding: 24px;
+
+  display: flex;
+  justify-content: center;
+}
