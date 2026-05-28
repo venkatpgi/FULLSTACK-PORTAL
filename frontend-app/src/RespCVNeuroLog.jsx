@@ -277,6 +277,46 @@ formData.rows.forEach((row) => {
   }
 });
 
+let pneumothorax = "No";
+
+formData.rows.forEach((row) => {
+  const name = row.parameter?.toLowerCase();
+
+  if (name?.includes("pneumothorax")) {
+
+    Object.values(row.values).forEach((value) => {
+      if (["yes", "y"].includes(value?.toLowerCase())) {
+        pneumothorax = "Yes";
+      }
+    });
+
+  }
+});
+
+let chestDrain = "No";
+
+formData.rows.forEach((row) => {
+  const name = row.parameter?.toLowerCase().trim();
+
+  if (
+    name === "chest drain in situ" ||
+    name.includes("chest drain")
+  ) {
+
+    Object.values(row.values).forEach((value) => {
+      if (
+        value?.toLowerCase?.() === "yes" ||
+        value?.toLowerCase?.() === "y"
+      ) {
+        chestDrain = "Yes";
+      }
+    });
+
+  }
+});
+
+console.log("🔥 chestDrain =", chestDrain);
+
 formData.rows.forEach((row) => {
   if (row.parameter === "Mode") {
     Object.entries(row.values).forEach(([day, value]) => {
@@ -297,6 +337,36 @@ formData.rows.forEach((row) => {
       }
     });
   }
+
+  if (
+  row.parameter?.toLowerCase().includes("extubation failure")
+) {
+
+  Object.entries(row.values).forEach(([day, value]) => {
+
+    if (
+      value?.toLowerCase?.() === "yes" ||
+      value?.toLowerCase?.() === "y"
+    ) {
+
+      const dateStr = dates[day - 1];
+
+      if (dateStr) {
+
+        const [dd, mm] = dateStr.split("/");
+
+        logs.push({
+          date: `2026-${mm}-${dd}`,
+          support_mode: "EXTUBATION_FAILURE"
+        });
+
+      }
+
+    }
+
+  });
+
+}
 });
 
 // 🔥 send all at once (replace old data)
@@ -311,7 +381,9 @@ await api.post("/steroid-data", {
   steroid_age_days: steroidDay,
   steroid_used: steroidUsed,
   pulmonary_hemorrhage: pulmonaryHemorrhage,
-  pulmonary_hypertension: pulmonaryHypertension 
+  pulmonary_hypertension: pulmonaryHypertension,
+  pneumothorax: pneumothorax,
+  chest_drain: chestDrain 
 });
 console.log("Steroid Day sending:", steroidDay);
       window.dispatchEvent(new Event("respiratoryUpdated"));

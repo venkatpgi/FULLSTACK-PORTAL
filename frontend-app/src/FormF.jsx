@@ -1665,6 +1665,13 @@ const fetchResp = async () => {
     postnatal_steroids: data.steroid_age_days ? "Yes" : "No",
     pulmonary_hemorrhage: data.pulmonary_hemorrhage || "No",
     pulmonary_hypertension: data.pulmonary_hypertension || "No",
+    pneumothorax: data.pneumothorax || "No",
+    chest_drain: data.chest_drain || "No",
+    extubation_failure:
+    data.extubation_failure || "No",
+
+    extubation_failure_episodes:
+    data.extubation_failure_episodes || 0,
   }));
 };
 
@@ -4925,11 +4932,11 @@ const peripheralStatus= getPeripheralStatus();
   </label>
 
   <select
-    name="pneumothorax"
-    value={formData.pneumothorax || ""}
-    onChange={handleChange}
-    onBlur={handleBlur}
-  >
+  name="pneumothorax"
+  value={formData.pneumothorax || ""}
+  onChange={handleChange}
+  disabled
+>
     <option value="">-- Select --</option>
     <option value="Yes">Yes</option>
     <option value="No">No</option>
@@ -4974,11 +4981,11 @@ const peripheralStatus= getPeripheralStatus();
       </label>
 
       <select
-        name="chest_drain"
-        value={formData.chest_drain || ""}
-        onChange={handleChange}
-        onBlur={handleBlur}
-      >
+  name="chest_drain"
+  value={formData.chest_drain || ""}
+  onChange={handleChange}
+  disabled
+>
         <option value="">-- Select --</option>
         <option value="Yes">Yes</option>
         <option value="No">No</option>
@@ -5055,6 +5062,26 @@ const peripheralStatus= getPeripheralStatus();
       />
       <span>iNO</span>
     </label>
+      <label className="rx-option">
+    <input
+      type="checkbox"
+      name="rx_vaso"
+      checked={formData.rx_vaso || false}
+      onChange={handleChange}
+    />
+    <span>Vasopressin</span>
+  </label>
+
+  {/* 🔥 NEW */}
+  <label className="rx-option">
+    <input
+      type="checkbox"
+      name="rx_miliri"
+      checked={formData.rx_miliri || false}
+      onChange={handleChange}
+    />
+    <span>Milrinone</span>
+  </label>
 
     <label className="rx-option">
       <input
@@ -7431,17 +7458,40 @@ const peripheralStatus= getPeripheralStatus();
     </div>
 
     <div className="form-group">
-      <label>Etiology <span className="required">*</span></label>
-      <input
-        name="unconj_etiology"
-        value={formData.unconj_etiology || ""}
-        onChange={handleChange}
-        onBlur={handleBlur}
-      />
-      {errors.unconj_etiology && (
-        <div className="error-text">{errors.unconj_etiology}</div>
-      )}
-    </div>
+    <label>Etiology <span className="required">*</span></label>
+
+    <select
+      name="jaundice_etiology"
+      value={formData.jaundice_etiology || ""}
+      onChange={handleChange}
+      onBlur={handleBlur}
+    >
+      <option value="">-- Select --</option>
+      <option value="Exaggeration">Exaggeration</option>
+      <option value="Dehydration">Dehydration</option>
+      <option value="Isoimmune">Isoimmune</option>
+      <option value="Others">Others</option>
+    </select>
+
+    {errors.jaundice_etiology && (
+      <div className="error-text">{errors.jaundice_etiology}</div>
+    )}
+
+    {formData.jaundice_etiology === "Others" && (
+      <div style={{ marginTop: "10px" }}>
+        <label>Specify Other <span className="required">*</span></label>
+        <input
+          name="jaundice_etiology_other"
+          value={formData.jaundice_etiology_other || ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        {errors.jaundice_etiology_other && (
+          <div className="error-text">{errors.jaundice_etiology_other}</div>
+        )}
+      </div>
+    )}
+  </div>
   </>
 )}
 
@@ -7562,7 +7612,7 @@ const peripheralStatus= getPeripheralStatus();
     </div>
 
     <div className="form-group">
-      <label>CHF <span className="required">*</span></label>
+      <label>Symptoms <span className="required">*</span></label>
       <select
         name="anemia_chf"
         value={formData.anemia_chf || ""}
@@ -7570,8 +7620,8 @@ const peripheralStatus= getPeripheralStatus();
         onBlur={handleBlur}
       >
         <option value="">-- Select --</option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
+        <option value="Yes">Asymptomatic</option>
+        <option value="No">Congestive Heart Failure</option>
       </select>
       {errors.anemia_chf && (
         <div className="error-text">{errors.anemia_chf}</div>
@@ -7667,7 +7717,7 @@ const peripheralStatus= getPeripheralStatus();
     <div className="form-row">
 
       <div className="form-group">
-        <label>Number <span className="required">*</span></label>
+        <label>Number of Transfusions <span className="required">*</span></label>
         <input
           type="number"
           name="prbc_number"
